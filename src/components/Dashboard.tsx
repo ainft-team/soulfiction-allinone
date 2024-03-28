@@ -22,10 +22,11 @@ const Dashboard: React.FC = () => {
 	// State
 	const [nftName, setNftName] = useState<string>('')
 	const [tokenUri, setTokenUri] = useState<string>('')
+	const [balanceOfSoullink, setBalanceOfSoullink] = useState<number>()
 
 	// Hooks
 	const { nft, executeContractRead, executeContractWrite } = useContract()
-	const { isConnected } = useAccount()
+	const { address, isConnected } = useAccount()
 	const { open } = useWeb3Modal()
 
 	// Handlers
@@ -71,16 +72,41 @@ const Dashboard: React.FC = () => {
 		}
 	}
 
+	const handleGetBalanceOf = async (owner: string) => {
+		try {
+			const result = (await executeContractRead({
+				address: nft.address,
+				abi: nft.abi,
+				functionName: 'balanceOf',
+				args: [owner],
+			})) as number
+			setBalanceOfSoullink(result)
+		} catch (e) {
+			console.error(e)
+		}
+	}
+
 	return (
 		<>
 			<Grid container spacing={4}>
 				<Grid item xs={12} md={6}>
 					<Paper sx={styles.paper}>
 						<Typography variant="h4" gutterBottom>
-							Your Dashboard
+							Shortcuts
 						</Typography>
+						{/* change from handleMint to handleChat */}
 						<Button onClick={handleMint} variant="outlined" sx={styles.button}>
-							Mint NFT
+							Chat with Mars
+						</Button>
+						{address && (
+							<>
+								<Button onClick={() => handleGetBalanceOf(address)} variant="outlined" sx={styles.button}>
+									Soullinker Verification
+								</Button>
+							</>
+						)}
+						<Button onClick={handleMint} variant="outlined" sx={styles.button}>
+							Transfer Soulstone
 						</Button>
 						{nft.address && (
 							<>
@@ -97,10 +123,13 @@ const Dashboard: React.FC = () => {
 				<Grid item xs={12} md={6}>
 					<Paper sx={styles.paper}>
 						<Typography variant="h4" gutterBottom>
-							More Information
+							SoulStone
 						</Typography>
-						<Typography gutterBottom>NFT Name: {nftName || 'n/a'}</Typography>
-						<Typography gutterBottom>TokenURI: {tokenUri || 'n/a'}</Typography>
+						<Typography gutterBottom>Connected: {address || 'Not Connected Yet'}</Typography>
+						<Typography gutterBottom>SoulStone Balance: {nftName || 'n/a'} $SS</Typography>
+						<Typography gutterBottom>SoulLink Balance: {balanceOfSoullink?.toString()} soullinks</Typography>
+						<Typography gutterBottom>Chat Mining Multiplier: {tokenUri || 'n/a'}x</Typography>
+						<Typography gutterBottom>Today Earned $SS: {tokenUri || 'n/a'}</Typography>
 					</Paper>
 				</Grid>
 			</Grid>

@@ -63,6 +63,10 @@ const AppHeader = () => {
 			text: 'Dashboard',
 			href: '/dashboard',
 		},
+		{
+			text: 'Chatting with Mars',
+			href: '/chat',
+		},
 	]
 	const userMenuItems = ['Switch Network', 'Switch Wallet', 'Disconnect']
 
