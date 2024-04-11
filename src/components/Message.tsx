@@ -37,7 +37,7 @@ function AIMessage({ text }: { text: string }) {
 	return (
 		<div className="flex items-start">
 			<div className="text-gray-300">
-				<Image src={'/aip.png'} alt="Soul Fiction Ai.P Image" width={50} height={40}  />
+				<Image src={'/aip.png'} alt="Soul Fiction Ai.P Image" width={50} height={40} />
 			</div>
 			<div className="bg-gray-800 px-4 w-full rounded-md min-h-[60px]">
 				<ReactMarkdown linkTarget="_blank" remarkPlugins={[remarkGfm]}>
