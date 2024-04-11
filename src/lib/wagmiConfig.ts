@@ -14,7 +14,7 @@ import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
 import { InjectedConnector } from 'wagmi/connectors/injected'
 import { LedgerConnector } from 'wagmi/connectors/ledger'
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
-import { alchemyProvider } from 'wagmi/providers/alchemy'
+// import { alchemyProvider } from 'wagmi/providers/alchemy'
 import { infuraProvider } from 'wagmi/providers/infura'
 import { publicProvider } from 'wagmi/providers/public'
 
@@ -34,7 +34,7 @@ export const { chains, publicClient, webSocketPublicClient } = configureChains(
 	// Prefer Alchemy, then Infura, then fallback
 	[
 		infuraProvider({ apiKey: `${process.env.NEXT_PUBLIC_INFURA_RPC_KEY}` }),
-		alchemyProvider({ apiKey: `${process.env.NEXT_PUBLIC_ALCHEMY_RPC_KEY}` }),
+		// alchemyProvider({ apiKey: `${process.env.NEXT_PUBLIC_ALCHEMY_RPC_KEY}` }),
 		publicProvider(),
 	],
 )

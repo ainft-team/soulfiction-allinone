@@ -31,7 +31,7 @@ const styles = {
 	logoMobile: {
 		mx: 2,
 		display: { xs: 'flex', md: 'none' },
-		fontFamily: 'monospace',
+		fontFamily: 'consolas',
 		fontWeight: 700,
 		letterSpacing: '.3rem',
 		color: 'inherit',
@@ -40,9 +40,9 @@ const styles = {
 	logoDesktop: {
 		mr: 2,
 		display: { xs: 'none', md: 'flex' },
-		fontFamily: 'monospace',
+		fontFamily: 'consolas',
 		fontWeight: 700,
-		letterSpacing: '.3rem',
+		letterSpacing: '.2rem',
 		color: 'inherit',
 		textDecoration: 'none',
 	},
@@ -55,13 +55,17 @@ const styles = {
 
 const AppHeader = () => {
 	// App Title
-	const dappTitleText = 'WEB3DAPP'
+	const dappTitleText = 'Soul Fiction'
 
 	// Navigation Pages
 	const pages = [
 		{
 			text: 'Dashboard',
 			href: '/dashboard',
+		},
+		{
+			text: 'Chatting with Mars',
+			href: '/chat',
 		},
 	]
 	const userMenuItems = ['Switch Network', 'Switch Wallet', 'Disconnect']

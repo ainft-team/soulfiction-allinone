@@ -1,4 +1,5 @@
 'use client' // Tradeoff, for the benefit of having <WagmiConfig> in one place and "globally"
+
 import './globals.css'
 import '@fontsource/roboto/300.css'
 import '@fontsource/roboto/400.css'
@@ -22,6 +23,7 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
 				<WagmiConfig config={wagmiConfig}>
 					<ContractProvider>
 						<ThemeProvider theme={muiTheme}>
+							{/* {children} */}
 							<PrimaryLayout>{children}</PrimaryLayout>
 						</ThemeProvider>
 					</ContractProvider>

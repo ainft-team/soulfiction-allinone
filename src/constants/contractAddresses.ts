@@ -1,7 +1,7 @@
 import { Abi, Address, getAddress } from 'viem'
-import { sepolia } from 'wagmi'
+import { mainnet } from 'wagmi'
 
-import { simpleNftABI } from '../../abis/SimpleNFT'
+import { soullinkNftABI } from '../../abis/SoullinkNFT'
 
 export type ContractABIPair = {
 	ADDRESS: Address
@@ -13,16 +13,25 @@ type ContractDeployments = {
 	NFT_COLLECTION: ContractABIPair
 }
 
-const SEPOLIA: ContractDeployments = {
-	// SimpleNFT: https://sepolia.etherscan.io/address/0x1cfD246a218b35e359584979dDBeAD1f567d9C88
+// const SEPOLIA: ContractDeployments = {
+// 	// SoullinkNFT: https://sepolia.etherscan.io/address/0x1cfD246a218b35e359584979dDBeAD1f567d9C88
+// 	NFT_COLLECTION: {
+// 		ADDRESS: getAddress('0x1cfD246a218b35e359584979dDBeAD1f567d9C88', sepolia.id),
+// 		ABI: soullinkNftABI,
+// 	},
+// }
+
+const MAINNET: ContractDeployments = {
+	// Soullink: https://etherscan.io/address/0xd6dbfb58c956949E3016151163ed6fD4301C4CE7
 	NFT_COLLECTION: {
-		ADDRESS: getAddress('0x1cfD246a218b35e359584979dDBeAD1f567d9C88', sepolia.id),
-		ABI: simpleNftABI,
+		ADDRESS: getAddress('0xd6dbfb58c956949E3016151163ed6fD4301C4CE7', mainnet.id),
+		ABI: soullinkNftABI,
 	},
 }
 
 const CONTRACTS = {
-	SEPOLIA,
+	// SEPOLIA,
+	MAINNET,
 }
 
 export default CONTRACTS
