@@ -12,7 +12,6 @@
 		"lint:code:fix": "next lint --fix",
 		"lint:formatting": "prettier . --check",
 		"lint:formatting:fix": "prettier . --write --log-level=silent",
-		"postinstall": "husky install"
 	},
 	"dependencies": {
 		"@ainft-team/ainft-js": "1.0.0",
