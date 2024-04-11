@@ -1,3 +1,4 @@
+'use client'
 import { Button, Typography } from '@mui/material'
 import { useWeb3Modal } from '@web3modal/wagmi/react'
 import { useConnect } from 'wagmi'

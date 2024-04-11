@@ -1,3 +1,4 @@
+'use client'
 import { createContext, useCallback, useContext, useEffect, useState } from 'react'
 import { Abi, Address, getContract, GetContractReturnType, parseEther } from 'viem'
 import { useAccount, usePublicClient, useWalletClient } from 'wagmi'

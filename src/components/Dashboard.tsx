@@ -1,9 +1,11 @@
 'use client'
 import { Button, Grid, Paper, Typography } from '@mui/material'
 import { useWeb3Modal } from '@web3modal/wagmi/react'
+import { get } from 'http'
 import { useState } from 'react'
 import { useAccount } from 'wagmi'
 
+import getRequest from '@/app/api/getRequest'
 import { useContract } from '@/components/ContractProvider'
 
 const styles = {
@@ -20,10 +22,9 @@ const styles = {
 
 const Dashboard: React.FC = () => {
 	// State
-	const [nftName, setNftName] = useState<string>('')
-	const [tokenUri, setTokenUri] = useState<string>('')
+	const [soulstone, setSoulstone] = useState<number>()
 	const [balanceOfSoullink, setBalanceOfSoullink] = useState<number>()
-
+	const [multiplier, setMultiplier] = useState<number>()
 	// Hooks
 	const { nft, executeContractRead, executeContractWrite } = useContract()
 	const { address, isConnected } = useAccount()
@@ -47,26 +48,14 @@ const Dashboard: React.FC = () => {
 		}
 	}
 
-	const handleGetName = async () => {
+	const handleGetSoulstone = async (evmAddress: string) => {
 		try {
-			setNftName('')
-			const result = (await executeContractRead({ address: nft.address, abi: nft.abi, functionName: 'name' })) as string
-			setNftName(result)
-		} catch (e) {
-			console.error(e)
-		}
-	}
-
-	const handleGetTokenURI = async (tokenId: number) => {
-		try {
-			setTokenUri('')
-			const result = (await executeContractRead({
-				address: nft.address,
-				abi: nft.abi,
-				functionName: 'tokenURI',
-				args: [tokenId],
-			})) as string
-			setTokenUri(result)
+			setSoulstone(1)
+			const res = await getRequest({
+				path: `/soulstone?evm_address=${evmAddress}`,
+			})
+			const { value } = res
+			setSoulstone(value)
 		} catch (e) {
 			console.error(e)
 		}
@@ -74,13 +63,23 @@ const Dashboard: React.FC = () => {
 
 	const handleGetBalanceOf = async (owner: string) => {
 		try {
-			const result = (await executeContractRead({
-				address: nft.address,
-				abi: nft.abi,
-				functionName: 'balanceOf',
-				args: [owner],
-			})) as number
-			setBalanceOfSoullink(result)
+			const res1 = await getRequest({
+				path: `/soullink?evm_address=${owner}`,
+			})
+			const { value } = res1
+			setBalanceOfSoullink(value)
+		} catch (e) {
+			console.error(e)
+		}
+	}
+
+	const handleGetMultiplier = async (numOfSoullink: number) => {
+		try {
+			const res = await getRequest({
+				path: `/multiplier?soullink_balance=${numOfSoullink}`,
+			})
+			const { value } = res
+			setMultiplier(value)
 		} catch (e) {
 			console.error(e)
 		}
@@ -94,27 +93,33 @@ const Dashboard: React.FC = () => {
 						<Typography variant="h4" gutterBottom>
 							Shortcuts
 						</Typography>
-						{/* change from handleMint to handleChat */}
-						<Button onClick={handleMint} variant="outlined" sx={styles.button}>
-							Chat with Mars
-						</Button>
+						{!address && (
+							<Typography variant="h6" gutterBottom>
+								First, connect your wallet to proceed
+							</Typography>
+						)}
 						{address && (
 							<>
 								<Button onClick={() => handleGetBalanceOf(address)} variant="outlined" sx={styles.button}>
-									Soullinker Verification
+									1. Verify You are Soullinker
 								</Button>
 							</>
 						)}
-						<Button onClick={handleMint} variant="outlined" sx={styles.button}>
-							Transfer Soulstone
-						</Button>
-						{nft.address && (
+						{address && (
 							<>
-								<Button onClick={handleGetName} variant="outlined" sx={styles.button}>
-									Get NFT Name
+								<Button onClick={() => handleGetSoulstone(address)} variant="outlined" sx={styles.button}>
+									2. Check your $SS
 								</Button>
-								<Button onClick={() => handleGetTokenURI(1)} variant="outlined" sx={styles.button}>
-									Get TokenURI
+							</>
+						)}
+						{address && (
+							<>
+								<Button
+									onClick={() => handleGetMultiplier(balanceOfSoullink ?? 0)}
+									variant="outlined"
+									sx={styles.button}
+								>
+									3. Check Mining Multiplier
 								</Button>
 							</>
 						)}
@@ -126,10 +131,9 @@ const Dashboard: React.FC = () => {
 							SoulStone
 						</Typography>
 						<Typography gutterBottom>Connected: {address || 'Not Connected Yet'}</Typography>
-						<Typography gutterBottom>SoulStone Balance: {nftName || 'n/a'} $SS</Typography>
-						<Typography gutterBottom>SoulLink Balance: {balanceOfSoullink?.toString()} soullinks</Typography>
-						<Typography gutterBottom>Chat Mining Multiplier: {tokenUri || 'n/a'}x</Typography>
-						<Typography gutterBottom>Today Earned $SS: {tokenUri || 'n/a'}</Typography>
+						<Typography gutterBottom>SoulLink Balance: {balanceOfSoullink?.toString() || 'n/a'} soullinks</Typography>
+						<Typography gutterBottom>SoulStone Balance: {soulstone || 'n/a'} $SS</Typography>
+						<Typography gutterBottom>Chat Mining Multiplier: {multiplier?.toString() || 'n/a'} x</Typography>
 					</Paper>
 				</Grid>
 			</Grid>
