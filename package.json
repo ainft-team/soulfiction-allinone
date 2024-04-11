@@ -11,7 +11,7 @@
 		"lint:code": "next lint",
 		"lint:code:fix": "next lint --fix",
 		"lint:formatting": "prettier . --check",
-		"lint:formatting:fix": "prettier . --write --log-level=silent",
+		"lint:formatting:fix": "prettier . --write --log-level=silent"
 	},
 	"dependencies": {
 		"@ainft-team/ainft-js": "1.0.0",
