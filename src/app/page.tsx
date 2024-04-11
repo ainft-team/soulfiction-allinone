@@ -18,7 +18,7 @@ const DefaultPage = () => {
 	return (
 		<Paper sx={styles.paper}>
 			<Typography variant="h4" gutterBottom>
-				Home Page
+				Soul Fiction One-Pager
 			</Typography>
 			<Typography>Put some info here</Typography>
 		</Paper>
