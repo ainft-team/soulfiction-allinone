@@ -29,10 +29,14 @@ type AddMessage = {
 	payload: { prompt: string; controller: AbortController }
 }
 type FlattenMessages = { type: 'flattenMessages' }
-type UpdatePromptAnswer = { type: 'updatePromptAnswer'; payload: string }
+type UpdatePromptAnswer = {
+	type: 'updatePromptAnswer'
+	payload: { content: string; controller: AbortController }
+}
 type Abort = { type: 'abort' }
+type Clear = { type: 'clear' }
 type Done = { type: 'done' }
-type AppActions = AddMessage | FlattenMessages | UpdatePromptAnswer | Abort | Done
+type AppActions = AddMessage | FlattenMessages | UpdatePromptAnswer | Abort | Clear | Done
 
 function reducer(state: AppState, action: AppActions): AppState {
 	switch (action.type) {
@@ -40,7 +44,7 @@ function reducer(state: AppState, action: AppActions): AppState {
 			return {
 				...state,
 				assistantThinking: true,
-				messages: [...state.messages, { name: 'User', text: action.payload.prompt }, { name: 'Assistant', text: '' }],
+				messages: [...state.messages, { name: 'User', text: action.payload.prompt }],
 				controller: action.payload.controller,
 			}
 		case 'flattenMessages':
@@ -49,18 +53,19 @@ function reducer(state: AppState, action: AppActions): AppState {
 				flattenedMessages: state.messages.map(msg => `${msg.name}: ${msg.text}`),
 			}
 		case 'updatePromptAnswer':
-			const conversationListCopy = [...state.messages]
-			const lastIndex = conversationListCopy.length - 1
-			conversationListCopy[lastIndex] = {
-				name: conversationListCopy[lastIndex].name,
-				text: action.payload,
-			}
+			// const conversationListCopy = [...state.messages]
+			// const lastIndex = conversationListCopy.length - 1
+			// conversationListCopy[lastIndex] = {
+			// 	name: conversationListCopy[lastIndex].name,
+			// 	text: action.payload.content,
+			// }
 
 			return {
 				...state,
 				assistantThinking: false,
 				isWriting: true,
-				messages: conversationListCopy,
+				messages: [...state.messages, { name: 'Assistant', text: action.payload.content }],
+				controller: action.payload.controller,
 			}
 		case 'abort':
 			state.controller?.abort()
@@ -68,6 +73,15 @@ function reducer(state: AppState, action: AppActions): AppState {
 				...state,
 				isWriting: false,
 				assistantThinking: false,
+				controller: null,
+			}
+		case 'clear':
+			state.controller?.abort()
+			return {
+				messages: [],
+				flattenedMessages: [],
+				assistantThinking: false,
+				isWriting: false,
 				controller: null,
 			}
 		case 'done':
@@ -83,8 +97,8 @@ function reducer(state: AppState, action: AppActions): AppState {
 }
 
 const Chat = () => {
-	const [messages, setMessages] = useState<string[]>([])
-	const [newMessage, setNewMessage] = useState('')
+	// const [messages, setMessages] = useState<Message[]>([])
+	// const [newMessage, setNewMessage] = useState('')
 	const { address, isConnected } = useAccount()
 	const { open } = useWeb3Modal()
 
@@ -106,10 +120,8 @@ const Chat = () => {
 				dispatch({ type: 'addMessage', payload: { prompt, controller } })
 				promptInput.current.value = ''
 
-				// state.messages flatten in string
-				dispatch({ type: 'flattenMessages' })
 				const res = await postRequest({
-					path: `/mock_reply`,
+					path: `/onepager/mock_reply`,
 					params: {
 						params: {
 							content: prompt,
@@ -119,22 +131,42 @@ const Chat = () => {
 					},
 				})
 
-				console.log(JSON.stringify(res))
-				const data = res.content
-				if (!data) {
+				console.log(res.type, res.content)
+				const { content, type } = res
+				if (!content) {
 					return
 				}
+				if (type === 'request_reward') {
+					dispatch({ type: 'updatePromptAnswer', payload: { content, controller } })
 
-				let done = false
+					const rewardsRes = await postRequest({
+						path: `/onepager/evaluate_conversation`,
+						params: {
+							params: {
+								evm_address: address,
+								messages: state.flattenedMessages,
+							},
+						},
+					})
 
-				while (!done) {
-					const assistantAnswer = res.content
-					dispatch({ type: 'updatePromptAnswer', payload: assistantAnswer })
-					dispatch({ type: 'flattenMessages' })
-					done = !state.assistantThinking
-				}
-				if (done) {
+					dispatch({
+						type: 'updatePromptAnswer',
+						payload: {
+							content: rewardsRes.reason,
+							controller,
+						},
+					})
 					dispatch({ type: 'done' })
+				} else {
+					let done = false
+
+					while (!done) {
+						dispatch({ type: 'updatePromptAnswer', payload: { content, controller } })
+						done = !state.assistantThinking
+					}
+					if (done) {
+						dispatch({ type: 'done' })
+					}
 				}
 			}
 		}
@@ -152,6 +184,10 @@ const Chat = () => {
 		dispatch({ type: 'abort' })
 	}
 
+	const handleClear = () => {
+		dispatch({ type: 'clear' })
+	}
+
 	// focus input on page load
 	useEffect(() => {
 		if (promptInput && promptInput.current) {
@@ -159,18 +195,22 @@ const Chat = () => {
 		}
 	}, [])
 
-	const handleSendMessage = () => {
-		if (newMessage.trim() !== '') {
-			setMessages([...messages, newMessage])
-			setNewMessage('')
-		}
-	}
+	useEffect(() => {
+		dispatch({ type: 'flattenMessages' })
+	}, [state.messages])
 
-	const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-		if (e.key === 'Enter') {
-			handleSendMessage()
-		}
-	}
+	// const handleSendMessage = () => {
+	// 	if (newMessage.trim() !== '') {
+	// 		setMessages([...messages, newMessage])
+	// 		setNewMessage('')
+	// 	}
+	// }
+
+	// const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+	// 	if (e.key === 'Enter') {
+	// 		handleSendMessage()
+	// 	}
+	// }
 
 	return (
 		<div className="flex h-full relative flex-1">
@@ -190,7 +230,7 @@ const Chat = () => {
 				</div>
 
 				<div className="absolute bottom-0 w-full px-1">
-					{(state.assistantThinking || state.isWriting) && (
+					{state.assistantThinking || state.isWriting ? (
 						<div className="flex mx-auto justify-center mb-2">
 							<button
 								type="button"
@@ -198,6 +238,16 @@ const Chat = () => {
 								onClick={handleAbort}
 							>
 								Stop generating
+							</button>
+						</div>
+					) : (
+						<div className="flex mx-auto justify-center mb-2">
+							<button
+								type="button"
+								className="rounded bg-indigo-50 py-1 px-1 text-xs font-semibold text-indigo-600 shadow-sm hover:bg-indigo-100"
+								onClick={handleClear}
+							>
+								Clear Chat
 							</button>
 						</div>
 					)}

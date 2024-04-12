@@ -52,7 +52,7 @@ const Dashboard: React.FC = () => {
 		try {
 			setSoulstone(1)
 			const res = await getRequest({
-				path: `/soulstone?evm_address=${evmAddress}`,
+				path: `/onepager/soulstone?evm_address=${evmAddress}`,
 			})
 			const { value } = res
 			setSoulstone(value)
@@ -63,10 +63,10 @@ const Dashboard: React.FC = () => {
 
 	const handleGetBalanceOf = async (owner: string) => {
 		try {
-			const res1 = await getRequest({
-				path: `/soullink?evm_address=${owner}`,
+			const res = await getRequest({
+				path: `/onepager/soullink?evm_address=${owner}`,
 			})
-			const { value } = res1
+			const { value } = res
 			setBalanceOfSoullink(value)
 		} catch (e) {
 			console.error(e)
@@ -76,7 +76,7 @@ const Dashboard: React.FC = () => {
 	const handleGetMultiplier = async (numOfSoullink: number) => {
 		try {
 			const res = await getRequest({
-				path: `/multiplier?soullink_balance=${numOfSoullink}`,
+				path: `/onepager/multiplier?soullink_balance=${numOfSoullink}`,
 			})
 			const { value } = res
 			setMultiplier(value)
