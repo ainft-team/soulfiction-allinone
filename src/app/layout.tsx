@@ -23,7 +23,6 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
 				<WagmiConfig config={wagmiConfig}>
 					<ContractProvider>
 						<ThemeProvider theme={muiTheme}>
-							{/* {children} */}
 							<PrimaryLayout>{children}</PrimaryLayout>
 						</ThemeProvider>
 					</ContractProvider>
