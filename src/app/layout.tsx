@@ -19,6 +19,9 @@ import wagmiConfig from '@/lib/wagmiConfig'
 const RootLayout = ({ children }: { children: React.ReactNode }) => {
 	return (
 		<html lang="en">
+			<head>
+				<meta httpEquiv="Content-Security-Policy" content="upgrade-insecure-requests" />
+			</head>
 			<body>
 				<WagmiConfig config={wagmiConfig}>
 					<ContractProvider>
