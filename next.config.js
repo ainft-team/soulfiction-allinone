@@ -24,6 +24,14 @@ const nextConfig = {
 		config.externals.push('pino-pretty', 'lokijs', 'encoding')
 		return config
 	},
+	rewrites: async () => {
+		return [
+			{
+				source: '/onepager/:path*', //api request path
+				destination: 'http://35.193.150.114:8101/onepager/:path*', //목적 path
+			},
+		]
+	},
 }
 
 module.exports = nextConfig
