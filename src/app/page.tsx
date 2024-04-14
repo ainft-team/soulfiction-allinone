@@ -1,4 +1,4 @@
-import { Paper, Typography } from '@mui/material'
+import { Link, Paper, Typography } from '@mui/material'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -12,6 +12,11 @@ const styles = {
 		p: 4,
 		textAlign: 'center',
 	},
+	button: {
+		display: 'block',
+		my: 2,
+		mx: 'auto',
+	},
 }
 
 const DefaultPage = () => {
@@ -20,7 +25,12 @@ const DefaultPage = () => {
 			<Typography variant="h4" gutterBottom>
 				Soul Fiction One-Pager
 			</Typography>
-			<Typography>Put some info here</Typography>
+			<Link
+				variant="body2"
+				href="https://docs.google.com/spreadsheets/d/1Y2Hex0o9hUqWXYjsZFvYKFDknn8GcHwNJS46B6Z2pnQ/edit?usp=sharing"
+			>
+				{'Craft instruction of Mars'}
+			</Link>
 		</Paper>
 	)
 }
