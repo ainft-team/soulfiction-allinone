@@ -149,7 +149,7 @@ const Chat = () => {
 						},
 					})
 
-					const answerAboutRewards = `You have earned ${rewardsRes.reward} Soulstones for this conversation.\n\nReward: ${rewardsRes.reward} SS\n\nConversation summary: ${rewardsRes.summarized_knowledge}\n\nReason: ${rewardsRes.reason}`
+					const answerAboutRewards = `You have earned ${rewardsRes.amount} Soulstones for this conversation.\n\nReward: ${rewardsRes.amount} SS\n\nConversation summary: ${rewardsRes.summarized_knowledge}\n\nReason: ${rewardsRes.reason}`
 
 					dispatch({
 						type: 'updatePromptAnswer',
